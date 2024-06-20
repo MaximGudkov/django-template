@@ -1,0 +1,53 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+
+TABLE user {
+  id integer [primary key]
+  email varchar
+  password varchar
+  profile_photo varchar
+  phone_number varchar
+  first_name varchar
+  last_name varchar
+  created_at timestamp
+}
+
+TABLE course {
+  id integer [primary key]
+  title varchar
+  description text
+  user_id integer
+  price decimal
+  tags array
+  created_at timestamp
+}
+
+TABLE tag {
+  id integer [primary key]
+  title varchar
+}
+
+TABLE review {
+  id integer [primary key]
+  course_id integer
+  user_id integer
+  rating decimal
+  comment text
+  created_at timestamp
+}
+
+TABLE purchase {
+  id integer [primary key]
+  user_id integer
+  course_id integer
+  created_at timestamp
+}
+
+
+Ref: course.user_id < user.id
+Ref: purchase.user_id < user.id
+Ref: purchase.course_id < course.id
+Ref: course.tags > tag.id
+Ref: review.course_id < course.id
+Ref: review.user_id < user.id

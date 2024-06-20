@@ -1,0 +1,67 @@
+version: "3.8"
+
+services:
+
+  backend:
+    container_name: temki_backend
+    init: true
+    build:
+      context: .
+      dockerfile: docker/dev/backend/Dockerfile
+    restart: unless-stopped
+    volumes:
+      - ./backend:/usr/src/backend
+    env_file:
+      - docker/dev/env/.backend.env
+      - docker/dev/env/.postgres.env
+    ports:
+      - "8000:8000"
+    depends_on: [ postgres ]
+    networks:
+        - temki_backend
+    healthcheck:
+      test: curl --fail -s http://localhost:8000$$HEALTH_CHECK_URL || exit 1
+      interval: 300s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  postgres:
+    container_name: temki_postgres
+    image: "postgres:16.1-alpine3.19"
+    restart: unless-stopped
+    env_file:
+      - docker/dev/env/.postgres.env
+    volumes:
+      - temki_postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    networks:
+      - temki_backend
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+#  redis:
+#    container_name: temki_redis
+#    image: redis:7.2.4-alpine
+#    restart: unless-stopped
+#    volumes:
+#      - temki_redis_data:/data
+#    networks:
+#      - temki_backend
+#    healthcheck:
+#      test: [ "CMD", "redis-cli","ping" ]
+#      interval: 1m20s
+#      timeout: 5s
+#      retries: 3
+
+volumes:
+  temki_postgres_data:
+#  temki_redis_data:
+
+networks:
+  temki_backend:

@@ -1,0 +1,36 @@
+### django ###
+
+django==5.0.2
+
+django-admin-rangefilter==0.12.0
+django-admin-autocomplete-filter==0.7.1
+
+# cache + message broker
+django-redis==5.4.0
+
+# PhoneNumberField
+django-phonenumber-field[phonenumbers]~=7.3
+
+
+### DRF ###
+djangorestframework~=3.14
+
+# docs
+drf_spectacular~=0.27
+
+# auth
+djangorestframework-simplejwt~=5.3
+rest-social-auth==8.3.0
+
+# cors policy
+django-cors-headers==4.3.1
+
+
+### Other ###
+
+psycopg2-binary~=2.9
+
+# https://github.com/hynek/argon2_cffi
+argon2-cffi~=23.1
+
+pillow~=10.3

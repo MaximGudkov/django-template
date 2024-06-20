@@ -1,0 +1,24 @@
+# django-extensions
+django-extensions~=3.2
+
+# debug toolbar
+django-debug-toolbar~=4.3
+
+# Utility for displaying the installed python packages in a form of a dependency tree
+pipdeptree~=2.14
+
+# tests
+coverage~=7.4
+
+# pre-commit
+pre-commit~=3.6
+
+# linters
+flake8~=7.0
+isort~=5.13
+black~=24.1
+ruff~=0.3
+
+mypy~=1.8
+django-stubs[compatible-mypy]
+djangorestframework-stubs[compatible-mypy]

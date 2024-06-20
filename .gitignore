@@ -1,0 +1,22 @@
+# IDEs
+.idea/
+.vscode
+
+
+### Django ###
+__pycache__/
+media
+.cache
+
+
+# virtualenv
+venv/
+
+
+# frontend dependencies
+node_modules/
+
+
+# dev files (just blueprints)
+/dev.txt
+/dev.py

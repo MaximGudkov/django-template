@@ -1,0 +1,94 @@
+version: "3.8"
+
+services:
+
+  backend:
+    container_name: temki_backend
+    init: true
+    build:
+      context: .
+      dockerfile: docker/dev/backend/Dockerfile
+    restart: unless-stopped
+    volumes:
+      - ./backend:/usr/src/backend
+    env_file:
+      - docker/dev/env/.backend.env
+      - docker/dev/env/.postgres.env
+    ports:
+      - "8000:8000"
+    depends_on: [ postgres, redis ]
+    healthcheck:
+      test: curl --fail -s http://localhost:8000$$HEALTH_CHECK_URL || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  postgres:
+    container_name: temki_postgres
+    image: "postgres:16.1-alpine3.19"
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=50"
+      - "-c"
+      - "shared_buffers=1GB"
+      - "-c"
+      - "effective_cache_size=4GB"
+      - "-c"
+      - "work_mem=16MB"
+      - "-c"
+      - "maintenance_work_mem=512MB"
+      - "-c"
+      - "random_page_cost=1.1"
+      - "-c"
+      - "temp_file_limit=10GB"
+      - "-c"
+      - "log_min_duration_statement=200ms"
+      - "-c"
+      - "idle_in_transaction_session_timeout=10s"
+      - "-c"
+      - "lock_timeout=1s"
+      - "-c"
+      - "statement_timeout=60s"
+      - "-c"
+      - "shared_preload_libraries=pg_stat_statements"
+      - "-c"
+      - "pg_stat_statements.max=10000"
+      - "-c"
+      - "pg_stat_statements.track=all"
+    restart: unless-stopped
+    env_file:
+      - docker/dev/env/.postgres.env
+    volumes:
+      - temki_postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  redis:
+    container_name: temki_redis
+    image: redis:7.0.8-alpine
+    restart: always
+    command: [ "/var/lib/redis/redis.conf" ]
+    volumes:
+      - ./docker/prod/redis/redis.conf:/var/lib/redis/redis.conf
+      - temki_redis_data:/data
+      - temki_redis_socket:/redis_socket
+    networks:
+      - separated_network
+    healthcheck:
+      test: [ "CMD", "redis-cli","ping" ]
+      interval: 1m20s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  temki_postgres_data:
+  temki_redis_data:
+  temki_redis_socket:

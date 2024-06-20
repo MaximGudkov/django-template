@@ -1,0 +1,151 @@
+###### BASE ######
+[build-system]
+requires = ["setuptools>=64.0.0"]
+build-backend = "setuptools.build_meta"
+
+
+###### LINTERS ######
+# MYPY
+[tool.mypy]
+python_version = "3.12"
+cache_dir = ".cache/mypy"
+ignore_missing_imports = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+warn_no_return = false
+exclude = '''
+(
+  migrations
+  | .cache
+  | venv
+)
+'''
+plugins = [
+  "mypy_django_plugin.main",
+  "mypy_drf_plugin.main"
+]
+
+[[tool.mypy.overrides]]
+# Django migrations should not produce any errors:
+module = "*.migrations.*"
+ignore_errors = true
+
+[tool.django-stubs]
+django_settings_module = "config.settings.local"
+ignore_missing_model_attributes = true
+
+
+# RUFF
+[tool.ruff]
+line-length = 119
+target-version = "py312"
+cache-dir = ".cache/ruff"
+extend-exclude = [
+    # codebase
+    "migrations",
+    # other
+    ".cache",
+    "venv",
+]
+
+[tool.ruff.lint]
+extend-ignore = [
+    #  F401",   # imported but unused
+    "F403",   # import *` used; unable to detect undefined names
+    "E501",   # Line too long (107 > 99)
+    #  "UP007",  # Use `X | Y` for type annotations
+]
+select = [
+  "F",
+  "E",
+  "W",
+  "C90",
+  "I",
+  "N",
+  "UP",
+  "YTT",
+  #  "ANN", # flake8-annotations
+  "ASYNC",
+  "S",
+  "BLE",
+  "FBT",
+  "B",
+  "A",
+  #  "COM", # Trailing comma
+  "C4",
+  "DTZ",
+  "T10",
+  "DJ",
+  #  "EM", # Exception must not use a string literal, assign to variable first
+  "EXE",
+  "FA",
+  #  "ISC", # May cause conflicts when used with the formatter
+  "ICN",
+  "G",
+  "INP",
+  "PIE",
+  "T20",
+  "PYI",
+  "PT",
+  "Q",
+  "RSE",
+  #  "RET", # Missing explicit `return` at the end of function
+  "SLF",
+  "SLOT",
+  "SIM",
+  "TID",
+  "TCH",
+  "INT",
+  #  "ARG", # Unused function argument
+  "PTH",
+  #  "ERA", # Found commented-out code
+  "PD",
+  #  "PGH", # Use specific rule codes when ignoring type issues
+  "PL",
+  #  "TRY", # Avoid specifying long messages outside the exception class
+  "FLY",
+  "NPY",
+  "AIR",
+  "PERF",
+  "LOG",
+  #  "RUF", # Ruff specific rules
+]
+
+[tool.ruff.format]
+docstring-code-format = true
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+
+
+###### TESTS ######
+[tool.coverage.run]
+omit = [
+    # codebase
+    "migrations",
+    # other
+    ".cache",
+    "venv",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+  "^\\s*@(abc.)?abstractmethod",
+  "^\\s*@(typing.)?overload",
+  "^\\s*if (typing.)?TYPE_CHECKING:",
+  "^\\s*if (settings.)?DEBUG:",
+  "pragma: no ?cover",
+  "def __repr__",
+  "def __str__",
+  "if self.debug:",
+  "raise AssertionError",
+  "raise NotImplementedError",
+  "if __name__ == .__main__.:",
+]
+
+[tool.coverage.xml]
+output = "coverage.xml"
