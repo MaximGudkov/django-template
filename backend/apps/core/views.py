@@ -7,4 +7,4 @@ from apps.users.decorators import no_auth
 @api_view(["GET"])
 @no_auth()
 def ping(_):
-    return Response({"data": "pggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggong"})
+    return Response({"data": "pong"})
